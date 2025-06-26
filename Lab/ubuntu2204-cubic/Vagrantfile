@@ -1,0 +1,20 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "generic/ubuntu2204"
+  config.vm.hostname = "cubic-hv"
+
+  config.vm.synced_folder "C:/pathto/iso/ubuntu", "/vagrant/iso"
+
+  config.vm.provider "hyperv" do |hv|
+    hv.vmname = "Ubuntu2204-Cubic"
+    hv.memory = 2048
+    hv.cpus = 1
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update
+    sudo apt-get install -y software-properties-common ubuntu-desktop-minimal gnome-terminal
+    sudo add-apt-repository -y ppa:cubic-wizard/release
+    sudo apt-get update
+    sudo apt-get install -y cubic
+  SHELL
+end

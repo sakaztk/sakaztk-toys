@@ -1,4 +1,4 @@
-.work/
+.git/
 .vagrant/
+.work/
 .ipynb_checkpoints/
-*._work
