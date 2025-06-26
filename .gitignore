@@ -1,0 +1,4 @@
+.work/
+.vagrant/
+.ipynb_checkpoints/
+*._work
