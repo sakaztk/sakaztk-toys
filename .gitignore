@@ -1,4 +1,5 @@
 .git/
 .vagrant/
+.autoversion/
 .work/
 .ipynb_checkpoints/
