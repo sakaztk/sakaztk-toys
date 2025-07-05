@@ -1,0 +1,17 @@
+services:
+  cubic:
+    build:
+      context: .
+      args:
+        UID: 1000
+        GID: 1000
+    image: cubic
+    container_name: cubic
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./volumes/cubic:/home/cubic/cubic  
+    stdin_open: true
+    tty: true
+    network_mode: host
