@@ -1,0 +1,66 @@
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  nodes = [
+    { :hostname => "ansible-ubuntu22", :role => ["ubuntu22", "ansible-control"], :box => "generic/ubuntu2204" },
+    { :hostname => "ansible-node1", :role => ["ubuntu22"],  :box => "generic/ubuntu2204" },
+    { :hostname => "ansible-node2", :role => ["rocky9"], :box => "generic/rocky9" }
+  ]
+
+  config.vm.provider "hyperv" do |h|
+    h.memory = 1024
+    h.cpus = 1
+    h.vm_integration_services = {
+      guest_service_interface: true,
+      heartbeat: true,
+      key_value_pair_exchange: true,
+      shutdown: true,
+      time_synchronization: true,
+      vss: true
+    }
+  end
+
+  nodes.each do |node|
+    config.vm.define node[:hostname] do |node_config|
+      node_config.vm.box = node[:box]
+      node_config.vm.hostname = node[:hostname]
+      node_config.vm.network "private_network", type: "dhcp", virtual_switch: "Default Switch"
+
+      node[:role].each do |role|
+        role_script_path = "scripts/#{role}.sh"
+        if File.exist?(role_script_path)
+          node_config.vm.provision :shell, path: role_script_path
+        else
+          warn "Warning: script for role '#{role}' not found at #{role_script_path}"
+        end
+      end
+
+      node[:role].each do |role|
+        role_script_path = "scripts/#{node[:hostname]}.sh"
+        if File.exist?(role_script_path)
+          node_config.vm.provision :shell, path: role_script_path
+        else
+          warn "Warning: script for role '#{role}' not found at #{role_script_path}"
+        end
+      end
+
+      node_config.vm.provider "hyperv" do |h|
+        h.vmname = node[:hostname]
+      end
+
+      node_config.trigger.after :up do |trigger|
+        trigger.info = "Adding InternalNIC to #{node[:hostname]}"
+        trigger.run = {
+          inline: <<-POWERSHELL
+            if (-not (Get-VMNetworkAdapter -VMName "#{node[:hostname]}" -Name "InternalNIC" -ErrorAction SilentlyContinue)) {
+              Stop-VM -Name "#{node[:hostname]}" -Force
+              Add-VMNetworkAdapter -VMName "#{node[:hostname]}" -SwitchName "InternalSwitch" -Name "InternalNIC"
+              Start-VM -Name "#{node[:hostname]}"
+            }
+          POWERSHELL
+        }
+      end
+
+    end
+  end
+end
