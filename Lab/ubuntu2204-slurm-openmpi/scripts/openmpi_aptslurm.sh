@@ -8,8 +8,7 @@ USE_SLURM=1
 apt-get update
 apt-get install -y build-essential wget libtool autoconf automake pkg-config
 if [ "$USE_SLURM" -eq 1 ]; then
-  export CPPFLAGS="-I/opt/slurm/include"
-  export LDFLAGS="-L/opt/slurm/lib"
+  apt-get install -y libslurm-dev
 fi
 
 # Download
@@ -27,7 +26,7 @@ cd /tmp
 tar xf openmpi-${VERSION}.tar.gz
 cd openmpi-${VERSION}
 
-CONFIG_OPTS="--prefix=/opt/openmpi"
+CONFIG_OPTS="--prefix=/usr/local/openmpi"
 if [ "$USE_SLURM" -eq 1 ]; then
   CONFIG_OPTS+=" --with-slurm"
 fi
@@ -37,19 +36,21 @@ make -j$(nproc)
 make install
 
 cat <<'EOF' > /etc/profile.d/openmpi.sh
-export PATH=/opt/openmpi/bin:$PATH
-export LD_LIBRARY_PATH=/opt/openmpi/lib:${LD_LIBRARY_PATH:-}
+export PATH=/usr/local/openmpi/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/openmpi/lib:${LD_LIBRARY_PATH:-}
 EOF
 chmod 644 /etc/profile.d/openmpi.sh
 grep -qxF 'source /etc/profile.d/openmpi.sh' /home/vagrant/.bashrc || echo 'source /etc/profile.d/openmpi.sh' >> /home/vagrant/.bashrc
 chown vagrant:vagrant /home/vagrant/.bashrc
 if grep -q '^PATH=' /etc/environment; then
-  sed -i "s|^PATH=\"\(.*\)\"|PATH=\"/opt/openmpi/bin:\1\"|" /etc/environment
+  sed -i "s|^PATH=\"\(.*\)\"|PATH=\"/usr/local/openmpi/bin:\1\"|" /etc/environment
 fi
 
 
-echo "/opt/openmpi/lib" > /etc/ld.so.conf.d/openmpi.conf
+echo "/usr/local/openmpi/lib" > /etc/ld.so.conf.d/openmpi.conf
 ldconfig
 
 cd ~
 rm -rf /tmp/openmpi-*
+
+echo "Open MPI $VERSION installed successfully."
