@@ -25,7 +25,6 @@ pip install \
   ansible-navigator \
   ansible-autodoc \
   molecule \
-  molecule-docker \
   molecule-plugins \
   pytest \
   testinfra \
