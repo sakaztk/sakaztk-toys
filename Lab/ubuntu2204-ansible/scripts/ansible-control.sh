@@ -31,6 +31,7 @@ pip install \
   pytest-testinfra \
   sops \
   yamllint \
+  docker \
 #  ansible-sops \
 
 chown -R vagrant:vagrant /opt/ansible-env

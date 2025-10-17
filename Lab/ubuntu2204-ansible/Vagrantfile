@@ -1,5 +1,18 @@
 VAGRANTFILE_API_VERSION = "2"
 
+def get_default_switch_ip
+  ip = nil
+  IO.popen('powershell -Command "Get-NetIPAddress -InterfaceAlias \'vEthernet (Default Switch)\' -AddressFamily IPv4 | Select-Object -ExpandProperty IPAddress"') do |io|
+    ip = io.read.strip
+  end
+  ip.empty? ? nil : ip
+end
+
+host_ip = get_default_switch_ip
+if host_ip.nil?
+  raise "Error: Could not detect host IP for 'vEthernet (Default Switch)'"
+end
+
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   nodes = [
     { :hostname => "ansible-ubuntu22", :role => ["ubuntu22", "ansible-control"], :box => "generic/ubuntu2204" },
@@ -25,6 +38,26 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       node_config.vm.box = node[:box]
       node_config.vm.hostname = node[:hostname]
       node_config.vm.network "private_network", type: "dhcp", virtual_switch: "Default Switch"
+
+      node_config.vm.synced_folder ".", "/vagrant",
+        type: "smb",
+        smb_username: "vagrant",
+        smb_password: "vagrant",
+        smb_host: host_ip
+
+      #node_config.vm.synced_folder "./shared", "/home/vagrant/shared", type: "rsync",
+      #  owner: "vagrant",
+      #  group: "vagrant",
+      #  rsync__auto: true,
+      #  rsync__args: ["--verbose", "--archive", "--compress"]
+
+      if node[:role].include?("ansible-control")
+        node_config.vm.synced_folder "./ansible", "/home/vagrant/ansible",
+          type: "smb",
+          smb_username: "vagrant",
+          smb_password: "vagrant",
+          smb_host: host_ip
+      end
 
       node[:role].each do |role|
         role_script_path = "scripts/#{role}.sh"
