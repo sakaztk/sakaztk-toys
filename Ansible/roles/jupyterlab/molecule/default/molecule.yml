@@ -1,0 +1,25 @@
+dependency:
+  name: galaxy
+driver:
+  name: podman
+platforms:
+  - name: ubuntu2404
+    pre_build_image: false
+    build_image: true
+    dockerfile: Dockerfile_ubuntu2404.j2
+    image: custom/ubuntu2404-molecule
+    user: root
+
+provisioner:
+  name: ansible
+  lint:
+    name: ansible-lint
+  options:
+    vvv: true
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../roles/
+
+scenario:
+  name: default
+verifier:
+  name: ansible

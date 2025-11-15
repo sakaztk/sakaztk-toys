@@ -1,0 +1,26 @@
+- name: Converge
+  hosts: all
+  gather_facts: true
+
+  tasks:
+  - name: Update apt cache
+    apt:
+      update_cache: yes
+
+  - name: Upgrade all packages to the latest version
+    apt:
+      upgrade: dist 
+      autoremove: yes
+      autoclean: yes
+
+  - name: Include role - ansible
+    include_role:
+      name: ansible
+
+  - name: Include role - pipx
+    include_role:
+      name: pipx
+
+  - name: Run role
+    include_role:
+      name: jupyterlab

@@ -1,0 +1,16 @@
+- name: Backup current sources.list
+  copy:
+    src: /etc/apt/sources.list
+    dest: /etc/apt/sources.list.backup
+    remote_src: yes
+    backup: yes
+
+- name: Generate sources.list based on selected mirror
+  copy:
+    dest: /etc/apt/sources.list
+    content: |
+      deb {{ ubuntu_mirror }} {{ ubuntu_codename }} {{ components | join(' ') }}
+      deb {{ ubuntu_mirror }} {{ ubuntu_codename }}-updates {{ components | join(' ') }}
+      deb {{ ubuntu_mirror }} {{ ubuntu_codename }}-backports {{ components | join(' ') }}
+      deb http://security.ubuntu.com/ubuntu/ {{ ubuntu_codename }}-security {{ components | join(' ') }}
+

@@ -1,0 +1,6 @@
+jupyterlab_user: "jupyter"
+jupyterlab_group: "jupyter"
+jupyterlab_home: "/home/jupyter"
+jupyterlab_config_path: "/home/jupyter/.jupyter/jupyter_lab_config.py"
+jupyterlab_use_redirect_file: false
+jupyterlab_browser: "firefox"

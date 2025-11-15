@@ -1,0 +1,7 @@
+ubuntu_mirror: "http://archive.ubuntu.com/ubuntu/"
+ubuntu_codename: "noble"
+components:
+  - main
+  - universe
+  - restricted
+  - multiverse

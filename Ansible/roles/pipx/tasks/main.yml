@@ -1,0 +1,14 @@
+- name: Create virtualenv for pipx
+  command: python3 -m venv /opt/pipx-venv
+  args:
+    creates: /opt/pipx-venv
+
+- name: Install pipx inside virtualenv
+  command: /opt/pipx-venv/bin/pip install pipx
+  args:
+    creates: /opt/pipx-venv/bin/pipx
+
+- name: Install pipx globally using virtualenv pipx
+  command: /opt/pipx-venv/bin/pipx install pipx --global
+  args:
+    creates: /usr/local/bin/pipx

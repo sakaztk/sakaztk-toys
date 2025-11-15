@@ -1,0 +1,11 @@
+- name: Configure WSL environment
+  hosts: localhost
+  become: yes
+  roles:
+    - role: ubuntu-environments
+    - role: ansible
+    - role: jupyterlab
+    - role: miniforge
+      install_type: user
+      miniforge_user: sakaztk
+      miniforge_home: /home/sakaztk

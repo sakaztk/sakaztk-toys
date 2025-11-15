@@ -1,0 +1,7 @@
+---
+miniforge_install_type: user #user/system
+miniforge_url: "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh"
+miniforge_user: "{{ ansible_user_id }}"
+miniforge_home: "{{ ansible_env.HOME | default('/home/' ~ miniforge_user) }}"
+miniforge_prefix_user: "{{ miniforge_home }}/.miniforge"
+miniforge_prefix_system: /opt/miniforge

@@ -1,0 +1,100 @@
+---
+- name: Determine Ubuntu version
+  ansible.builtin.set_fact:
+    ubuntu_version: "{{ ansible_distribution_version }}"
+
+- name: Install Node.js prerequisites
+  apt:
+    name:
+      - curl
+      - ca-certificates
+      - gnupg
+    state: present
+    update_cache: yes
+
+- name: Install Node.js and configurable-http-proxy (Ubuntu 22.04)
+  when: ubuntu_version == '22.04'
+  block:
+    - name: Install Node.js 22 via NodeSource
+      become: yes
+      shell: |
+        curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get install -y nodejs
+      args:
+        executable: /bin/bash
+
+- name: Install Node.js and configurable-http-proxy (Ubuntu 24.04)
+  become: yes
+  when: ubuntu_version == '24.04'
+  block:
+    - name: Install Node.js
+      apt:
+        name:
+          - nodejs
+          - npm
+        state: present
+        update_cache: yes
+
+- name: Install configurable-http-proxy globally
+  npm:
+    name: configurable-http-proxy
+    global: yes
+    state: present
+
+- name: Ensure virtualenv exists
+  pip:
+    name: virtualenv
+    executable: pip3
+
+- name: Create ansible virtual environment
+  command: python3 -m venv /opt/ansible-env
+  args:
+    creates: /opt/ansible-env/bin/activate
+
+- name: Install JupyterHub and dependencies in virtualenv
+  pip:
+    name:
+      - jupyterhub
+      - jupyterlab
+      - notebook
+    virtualenv: /opt/ansible-env
+    virtualenv_command: python3 -m venv
+
+- name: Create JupyterHub config directory
+  file:
+    path: /etc/jupyterhub
+    state: directory
+    owner: "{{ jupyterhub_user }}"
+    group: "{{ jupyterhub_user }}"
+    mode: '0755'
+
+- name: Deploy JupyterHub config
+  template:
+    src: jupyterhub_config.py.j2
+    dest: /etc/jupyterhub/jupyterhub_config.py
+    owner: "{{ jupyterhub_user }}"
+    group: "{{ jupyterhub_user }}"
+    mode: '0644'
+
+- name: Create systemd unit file for JupyterHub
+  template:
+    src: jupyterhub.service.j2
+    dest: /etc/systemd/system/jupyterhub.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+  when: ansible_service_mgr == "systemd" and ansible_virtualization_type != "docker" #Skip in container
+  #when: ansible_service_mgr is defined and ansible_service_mgr == "systemd"
+  
+- name: Enable and start JupyterHub service
+  systemd:
+    name: jupyterhub
+    enabled: yes
+    state: started
+    masked: no
+  when: ansible_service_mgr == "systemd" and ansible_virtualization_type != "docker" #Skip in container
+  #when: ansible_service_mgr is defined and ansible_service_mgr == "systemd"
+  

@@ -1,0 +1,29 @@
+---
+ansible_env_user: "{{ ansible_user_id }}"
+ansible_env_home: "{{ '/root' if ansible_user_id == 'root' else '/home/' + ansible_user_id }}"
+ansible_env_path: "{{ ansible_env_home }}/venv/ansible"
+ansible_packages:
+  - python3
+  - python3-venv
+  - python3-pip
+  - git
+  - docker.io
+  - docker-compose
+  - graphviz
+ansible_pip_packages:
+  - ansible
+  - ansible-core
+  - ansible-lint
+  - ansible-runner
+  - ansible-navigator
+  - ansible-autodoc
+  - molecule
+  - molecule-plugins
+  - pytest
+  - testinfra
+  - pytest-testinfra
+  - sops
+  - yamllint
+  - docker
+galaxy_collections:
+  - community.general

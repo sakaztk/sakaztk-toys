@@ -1,0 +1,3 @@
+ansible_env_user: "root"
+ansible_env_home: "{{ '/root' if ansible_user_id == 'root' else '/home/' + ansible_user_id }}"
+ansible_env_path: "{{ ansible_env_home }}/venv/ansible"

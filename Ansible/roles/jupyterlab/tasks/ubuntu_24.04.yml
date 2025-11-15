@@ -1,0 +1,116 @@
+---
+- name: Debug jupyterlab variables
+  debug:
+    msg:
+      - "jupyterlab_user={{ jupyterlab_user }}"
+      - "jupyterlab_group={{ jupyterlab_group }}"
+      - "jupyterlab_home={{ jupyterlab_home }}"
+      - "jupyterlab_config_path={{ jupyterlab_config_path }}"
+      - "jupyterlab_use_redirect_file={{ jupyterlab_use_redirect_file }}"
+      - "jupyterlab_browser={{ jupyterlab_browser }}"
+
+- name: Install system dependencies
+  apt:
+    name:
+      - python3-venv
+      - python3-pip
+      - build-essential
+      - nodejs
+      - npm
+    state: present
+    update_cache: yes
+
+#- name: Ensure required collections are installed
+#  ansible.builtin.shell: |
+#    export PATH="{{ ansible_env.PATH }}:/usr/local/bin:/usr/bin:/home/{{ ansible_user }}/.local/bin"
+#    if ! ansible-galaxy collection list | grep -q '^community.general '; then
+#      ansible-galaxy collection install community.general
+#    fi
+#  args:
+#    executable: /bin/bash
+#  loop: "{{ galaxy_collections }}"
+#  register: collection_install
+#  changed_when: "'Installing' in collection_install.stdout"
+
+- name: Ensure jupyter user
+  user:
+    name: "{{ jupyterlab_user }}"
+    comment: "Jupyter User"
+    shell: /bin/bash
+    create_home: yes
+
+- name: Ensure binary path is in user's PATH
+  lineinfile:
+    path: "{{ jupyterlab_home }}/.bashrc"
+    line: 'export PATH="{{ jupyterlab_home }}/.local/bin:$PATH"'
+    state: present
+  become_user: "{{ jupyterlab_user }}"
+
+- name: Install jupyter-core via pipx
+  community.general.pipx:
+    executable: /usr/local/bin/pipx
+    name: jupyter-core
+    state: present
+  become_user: "{{ jupyterlab_user }}"
+  environment:
+    HOME: "{{ jupyterlab_home }}"
+    PATH: "{{ jupyterlab_home }}/.local/bin:{{ ansible_env.PATH }}"
+
+- name: Inject JupyterLab and extensions into jupyter-core venv
+  community.general.pipx:
+    executable: /usr/local/bin/pipx
+    name: jupyter-core
+    inject_packages:
+      - jupyterlab
+      - notebook
+      - ipywidgets
+      - qtconsole
+    state: inject
+  become_user: "{{ jupyterlab_user }}"
+  environment:
+    HOME: "{{ jupyterlab_home }}"
+    PATH: "{{ jupyterlab_home }}/.local/bin:{{ ansible_env.PATH }}"
+  
+- name: Generate JupyterLab config if not exists
+  become_user: "{{ jupyterlab_user }}"
+  shell: |
+    export PATH="{{ jupyterlab_home }}/.local/bin:$PATH"
+    if [ ! -f "{{ jupyterlab_home }}/.jupyter/jupyter_lab_config.py" ]; then
+      jupyter lab --generate-config
+    fi
+  args:
+    creates: "{{ jupyterlab_home }}/.jupyter/jupyter_lab_config.py"
+
+- name: Configure JupyterLab (use_redirect_file)
+  become_user: "{{ jupyterlab_user }}"
+  lineinfile:
+    path: "{{ jupyterlab_config_path }}"
+    regexp: '^c\.ServerApp\.use_redirect_file'
+    line: "c.ServerApp.use_redirect_file = {{ jupyterlab_use_redirect_file  }}"
+    create: yes
+
+- name: Configure JupyterLab (browser)
+  become_user: "{{ jupyterlab_user }}"
+  lineinfile:
+    path: "{{ jupyterlab_config_path }}"
+    regexp: '^c\.ServerApp\.browser'
+    line: "c.ServerApp.browser = '{{ jupyterlab_browser }}'"
+    create: yes
+  
+#- name: Configure JupyterLab to allow remote access
+#  lineinfile:
+#    path: "{{ jupyterlab_home }}/.jupyter/jupyter_lab_config.py"
+#    regexp: '^#?c.ServerApp.ip'
+#    line: "c.ServerApp.ip = '0.0.0.0'"
+#    owner: "{{ jupyterlab_user }}"
+#    group: "{{ jupyterlab_group }}"
+#    create: yes
+
+#- name: Set JupyterLab port
+#  lineinfile:
+#    path: "{{ jupyterlab_home }}/.jupyter/jupyter_lab_config.py"
+#    regexp: '^#?c.ServerApp.port'
+#    line: "c.ServerApp.port = {{ jupyterlab_port }}"
+#    owner: "{{ jupyterlab_user }}"
+#    group: "{{ jupyterlab_group }}"
+#    create: yes

@@ -1,0 +1,92 @@
+- name: Backup current sources.list
+  copy:
+    src: /etc/apt/sources.list
+    dest: /etc/apt/sources.list.backup
+    remote_src: yes
+    backup: yes
+
+- name: Generate sources.list based on selected mirror
+  copy:
+    dest: /etc/apt/sources.list
+    content: |
+      deb {{ ubuntu_mirror }} {{ ubuntu_codename }} {{ components | join(' ') }}
+      deb {{ ubuntu_mirror }} {{ ubuntu_codename }}-updates {{ components | join(' ') }}
+      deb {{ ubuntu_mirror }} {{ ubuntu_codename }}-backports {{ components | join(' ') }}
+      deb http://security.ubuntu.com/ubuntu/ {{ ubuntu_codename }}-security {{ components | join(' ') }}
+
+- name: Ensure locales and tzdata package is installed
+  apt:
+    name: 
+      - locales
+      - tzdata
+    state: present
+    update_cache: yes
+
+- name: Ensure locales are generated
+  community.general.locale_gen:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ locales_to_generate }}"
+
+- name: Set default locale
+  copy:
+    dest: /etc/default/locale
+    content: |
+      LANG={{ system_locale }}
+      LANGUAGE={{ system_locale }}
+      LC_ALL={{ system_locale }}
+  notify: Update locale
+
+- name: Update locale
+  command: "update-locale LANG={{ system_locale }} LC_ALL={{ system_locale }}"
+  when: false
+
+- name: Set timezone
+  timezone:
+    name: "{{ timezone }}"
+
+- name: Ensure systemd-timesyncd package is installed
+  apt:
+    name: systemd-timesyncd
+    state: present
+    update_cache: yes
+
+- name: Configure NTP servers for systemd-timesyncd
+  blockinfile:
+    path: /etc/systemd/timesyncd.conf
+    block: |
+      [Time]
+      NTP={{ ntp_servers | join(' ') }}
+      FallbackNTP=ntp.ubuntu.com
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+
+- name: Enable and start systemd-timesyncd
+  systemd:
+    name: systemd-timesyncd
+    enabled: yes
+    state: started
+
+- name: Restart systemd-timesyncd to apply configuration
+  systemd:
+    name: systemd-timesyncd
+    state: restarted
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Upgrade all packages to the latest version
+  apt:
+    upgrade: dist 
+    autoremove: yes
+    autoclean: yes
+
+- name: Install common packages
+  apt:
+    name: "{{ common_packages }}"
+    state: present
+    install_recommends: no
+    force_apt_get: yes
+    purge: no
+    autoremove: yes
+    autoclean: yes

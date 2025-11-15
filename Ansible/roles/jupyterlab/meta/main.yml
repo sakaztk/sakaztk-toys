@@ -1,0 +1,6 @@
+galaxy_info:
+  role_name: jupyterlab
+  author: sakaztk
+
+dependencies:
+  - role: pipx
