@@ -1,0 +1,9 @@
+japanese_fonts:
+  - fonts-ipafont
+  - fonts-noto-cjk
+  - fonts-takao
+
+japanese_input_packages:
+  - fcitx
+  - fcitx-mozc
+  - im-config

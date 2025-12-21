@@ -1,0 +1,10 @@
+galaxy_collections:
+  - community.general
+
+jupyterlab_user: "{{ ansible_user_id }}"
+jupyterlab_group: "{{ ansible_user_id }}"
+jupyterlab_home: "{{ '/root' if jupyterlab_user == 'root' else '/home/' + jupyterlab_user }}"
+
+jupyterlab_config_path: "{{ jupyterlab_home }}/.jupyter/jupyter_lab_config.py"
+jupyterlab_use_redirect_file: true
+jupyterlab_browser: ""

@@ -1,0 +1,52 @@
+FROM ubuntu:24.04
+RUN apt-get update && \
+    apt-get install -y \
+        acl \
+        adduser \
+        apt-utils \
+        bash \
+        bsdmainutils \
+        build-essential \
+        coreutils \
+        curl \
+        dash \
+        dnsutils \
+        e2fslibs \
+        e2fsprogs \
+        fdisk \
+        findutils \
+        git \
+        grep \
+        gzip \
+        hostname \
+        htop \
+        ifupdown \
+        init-system-helpers \
+        iproute2 \
+        iputils-ping \
+        less \
+        login \
+        lsb-release \
+        man-db \
+        mawk \
+        mount \
+        nano \
+        ncurses-base \
+        ncurses-bin \
+        netcat-openbsd \
+        net-tools \
+        passwd \
+        perl-base \
+        sed \
+        sensible-utils \
+        software-properties-common \
+        sysvinit-utils \
+        tar \
+        tzdata \
+        ufw \
+        util-linux \
+        vim-tiny \
+        wget \
+        traceroute \
+        vim \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*

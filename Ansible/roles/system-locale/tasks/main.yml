@@ -1,0 +1,30 @@
+- name: Debug locale variables
+  debug:
+    msg:
+      - "system_locale={{ system_locale }}"
+
+- name: Ensure locales package is installed
+  apt:
+    name: 
+      - locales
+    state: present
+    update_cache: yes
+
+- name: Ensure locales are generated
+  community.general.locale_gen:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ locales_to_generate }}"
+
+- name: Set default locale
+  copy:
+    dest: /etc/default/locale
+    content: |
+      LANG={{ system_locale }}
+      LANGUAGE={{ system_locale }}
+      LC_ALL={{ system_locale }}
+  notify: Update locale
+
+- name: Update locale
+  command: "update-locale LANG={{ system_locale }} LC_ALL={{ system_locale }}"
+  when: false

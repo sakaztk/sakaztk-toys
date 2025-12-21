@@ -1,0 +1,23 @@
+- name: Install Japanese fonts
+  apt:
+    name: "{{ japanese_fonts }}"
+    state: present
+    update_cache: yes
+
+- name: Install Japanese input method packages
+  apt:
+    name: "{{ japanese_input_packages }}"
+    state: present
+    install_recommends: no
+
+- name: Set fcitx as default input method for the user
+  command: im-config -n fcitx
+  environment:
+    LANG: "{{ ansible_env.LANG | default('C.UTF-8') }}"
+
+#- name: Inform user about GUI session requirements
+#  debug:
+#    msg: |
+#      Japanese input method installed.
+#      To enable fcitx in a GUI environment, start your desktop session and configure
+#      input method settings (e.g., GTK_IM_MODULE, QT_IM_MODULE, XMODIFIERS, fcitx -d).

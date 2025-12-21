@@ -1,0 +1,19 @@
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Upgrade all packages to the latest version
+  apt:
+    upgrade: dist 
+    autoremove: yes
+    autoclean: yes
+
+- name: Install common packages
+  apt:
+    name: "{{ common_packages }}"
+    state: present
+    install_recommends: no
+    force_apt_get: yes
+    purge: no
+    autoremove: yes
+    autoclean: yes

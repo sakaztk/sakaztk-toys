@@ -1,0 +1,14 @@
+[Unit]
+Description=JupyterHub
+After=network.target
+
+[Service]
+User={{ jupyterhub_user }}
+Environment=PATH={{ jupyterhub_install_env }}/bin:/usr/local/bin:/usr/bin
+ExecStart={{ jupyterhub_install_env }}/bin/jupyterhub -f {{ jupyterhub_config_dir }}/jupyterhub_config.py
+WorkingDirectory={{ jupyterhub_config_dir }}
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

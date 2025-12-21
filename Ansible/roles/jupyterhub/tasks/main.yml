@@ -1,0 +1,13 @@
+- name: Include OS/version specific tasks
+  block:
+    - name: Include Ubuntu tasks
+      include_tasks: "ubuntu_{{ ansible_distribution_version }}.yml"
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Include Debian tasks
+      include_tasks: "debian_{{ ansible_distribution_version }}.yml"
+      when: ansible_distribution == "Debian"
+
+    - name: Include Fedora tasks
+      include_tasks: "fedora_{{ ansible_distribution_version }}.yml"
+      when: ansible_distribution == "Fedora"

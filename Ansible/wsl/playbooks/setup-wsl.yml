@@ -1,0 +1,19 @@
+- name: Configure WSL
+  hosts: localhost
+  become: yes
+  roles:
+    - role: ansible
+    - role: system-sources
+    - role: system-locale
+    - role: system-timezone
+    - role: system-timesyncd
+    - role: system-packages
+    - role: pipx
+    - role: jupyterlab
+    - role: miniforge
+
+- name: Configure Japanese
+  hosts: japanese
+  become: yes
+  roles:
+    - role: japanese-input

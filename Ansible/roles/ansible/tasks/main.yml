@@ -1,0 +1,78 @@
+- name: Debug ansible variables
+  debug:
+    msg:
+      - "ansible_env_user={{ ansible_env_user }}"
+      - "ansible_env_home={{ ansible_env_home }}"
+      - "ansible_env_path={{ ansible_env_path }}"
+
+- name: Ensure apt cache is updated
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install required packages
+  apt:
+    name: "{{ ansible_packages }}"
+    state: present
+
+- name: Create Python virtual environment in user's home
+  command:
+    cmd: python3 -m venv "{{ ansible_env_path }}"
+    creates: "{{ ansible_env_path }}/bin/activate"
+  become_user: "{{ ansible_env_user }}"
+
+- name: Upgrade pip in virtualenv
+  pip:
+    name: pip
+    state: latest
+    virtualenv: "{{ ansible_env_path }}"
+  become_user: "{{ ansible_env_user }}"
+
+- name: Install Python packages in virtualenv
+  pip:
+    name: "{{ ansible_pip_packages }}"
+    virtualenv: "{{ ansible_env_path }}"
+  become_user: "{{ ansible_env_user }}"
+
+- name: Ensure user owns the virtualenv
+  file:
+    path: "{{ ansible_env_path }}"
+    state: directory
+    owner: "{{ ansible_env_user }}"
+    group: "{{ ansible_env_user }}"
+    recurse: yes
+
+- name: Add virtualenv bin to PATH in .bashrc
+  lineinfile:
+    path: "{{ ansible_env_home }}/.bashrc"
+    line: 'export PATH="{{ ansible_env_path }}/bin:$PATH"'
+    state: present
+  become_user: "{{ ansible_env_user }}"
+
+#- name: Add user to docker group
+#  user:
+#    name: "{{ ansible_env_user }}"
+#    groups: docker
+#    append: yes
+
+#- name: Enable and start Docker service
+#  systemd:
+#    name: docker
+#    enabled: yes
+#    state: started
+
+- name: Verify Ansible installation
+  command:
+    cmd: "{{ ansible_env_path }}/bin/ansible --version"
+  register: ansible_version
+  changed_when: false
+
+- name: Ensure required collections are installed
+  ansible.builtin.shell: >
+    {{ ansible_env_path }}/bin/ansible-galaxy collection list | grep -q '^{{ item }} '
+    || {{ ansible_env_path }}/bin/ansible-galaxy collection install {{ item }}
+  args:
+    executable: /bin/bash
+  loop: "{{ galaxy_collections }}"
+  register: collection_install
+  changed_when: "'Installing' in collection_install.stdout"

@@ -1,0 +1,62 @@
+---
+- name: Set default miniforge_user, home, and prefix
+  set_fact:
+    miniforge_user: "{{ miniforge_user | default(ansible_user_id | default(ansible_env.USER)) }}"
+    miniforge_home: "{{ miniforge_home | default(ansible_env.HOME | default('/home/' ~ miniforge_user)) }}"
+    miniforge_prefix_user: "{{ miniforge_prefix_user | default(miniforge_home + '/.miniforge') }}"
+    miniforge_prefix: "{{ miniforge_prefix_system if miniforge_install_type == 'system' else miniforge_prefix_user }}"
+
+- name: Debug miniforge variables
+  debug:
+    msg:
+      - "miniforge_install_type={{ miniforge_install_type }}"
+      - "miniforge_user={{ miniforge_user }}"
+      - "miniforge_home={{ miniforge_home }}"
+      - "miniforge_prefix={{ miniforge_prefix }}"
+
+- name: Ensure dependencies for Miniforge installer
+  apt:
+    name: curl
+    state: present
+  become: true
+
+- name: Check if Miniforge installer already exists
+  stat:
+    path: /tmp/Miniforge3.sh
+  register: miniforge_installer
+
+- name: Download Miniforge installer
+  get_url:
+    url: "{{ miniforge_url }}"
+    dest: "/tmp/Miniforge3.sh"
+    mode: '0755'
+    validate_certs: true
+  become: "{{ miniforge_install_type == 'system' }}"
+  become_user: "{{ 'root' if miniforge_install_type == 'system' else miniforge_user }}"
+  when: not miniforge_installer.stat.exists
+
+- name: Install Miniforge
+  command: "/tmp/Miniforge3.sh -b -p {{ miniforge_prefix }}"
+  args:
+    creates: "{{ miniforge_prefix }}/bin/conda"
+  become: "{{ miniforge_install_type == 'system' }}"
+  become_user: "{{ 'root' if miniforge_install_type == 'system' else miniforge_user }}"
+
+- name: Ensure Miniforge PATH in .bashrc (user only)
+  lineinfile:
+    path: "{{ miniforge_home }}/.bashrc"
+    line: 'export PATH="{{ miniforge_prefix }}/bin:$PATH"'
+    insertafter: EOF
+    state: present
+  when: miniforge_install_type == 'user'
+  become_user: "{{ miniforge_user }}"
+
+- name: Ensure Miniforge PATH in /etc/profile.d (system only)
+  copy:
+    dest: /etc/profile.d/miniforge.sh
+    content: |
+      # Miniforge PATH
+      export PATH="{{ miniforge_prefix }}/bin:$PATH"
+    mode: '0755'
+  when: miniforge_install_type == 'system'
+  become: true

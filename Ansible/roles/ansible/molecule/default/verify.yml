@@ -1,0 +1,9 @@
+- name: Verify JupyterLab role
+  hosts: all
+  tasks:
+  - name: Debug ansible variables
+    debug:
+      msg:
+        - "ansible_env_user={{ ansible_env_user }}"
+        - "ansible_env_home={{ ansible_env_home }}"
+        - "ansible_env_path={{ ansible_env_path }}"

@@ -1,0 +1,3 @@
+system_locale: "en_US.UTF-8"
+locales_to_generate:
+  - "{{ system_locale }}"

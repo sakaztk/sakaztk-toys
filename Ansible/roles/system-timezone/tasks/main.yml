@@ -1,0 +1,15 @@
+- name: Debug timezone variables
+  debug:
+    msg:
+      - "timezone={{ timezone }}"
+
+- name: Ensure tzdata package is installed
+  apt:
+    name: 
+      - tzdata
+    state: present
+    update_cache: yes
+
+- name: Set timezone
+  timezone:
+    name: "{{ timezone }}"

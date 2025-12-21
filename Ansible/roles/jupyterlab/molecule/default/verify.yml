@@ -1,0 +1,83 @@
+- name: Verify JupyterLab role
+  hosts: all
+  tasks:
+
+    - name: Check jupyter user exists via shell
+      shell: id -u "{{ jupyterlab_user }}"
+      register: user_check
+      changed_when: false
+      failed_when: user_check.rc != 0
+
+    - name: Assert jupyter user exists
+      assert:
+        that:
+          - user_check.rc == 0
+
+    - name: Check .bashrc contains PATH export
+      shell: grep 'export PATH="{{ jupyterlab_home }}/.local/bin:$PATH"' "{{ jupyterlab_home }}/.bashrc"
+      register: bashrc_path
+      changed_when: false
+      failed_when: bashrc_path.rc != 0
+
+    - name: Check jupyter-core binary exists
+      stat:
+        path: "{{ jupyterlab_home }}/.local/share/pipx/venvs/jupyter-core/bin/jupyter"
+      register: jupyter_core_bin
+
+    - name: Assert jupyter-core binary exists
+      assert:
+        that:
+          - jupyter_core_bin.stat.exists
+
+    - name: Check jupyter-lab binary exists
+      stat:
+        path: "{{ jupyterlab_home }}/.local/share/pipx/venvs/jupyter-core/bin/jupyter-lab"
+      register: jupyter_lab_bin
+
+    - name: Assert jupyter-lab binary exists
+      assert:
+        that:
+          - jupyter_lab_bin.stat.exists
+
+    - name: Check jupyter-notebook binary exists
+      stat:
+        path: "{{ jupyterlab_home }}/.local/share/pipx/venvs/jupyter-core/bin/jupyter-notebook"
+      register: jupyter_notebook_bin
+
+    - name: Assert jupyter-notebook binary exists
+      assert:
+        that:
+          - jupyter_notebook_bin.stat.exists
+
+    - name: Check jupyter-qtconsole binary exists
+      stat:
+        path: "{{ jupyterlab_home }}/.local/share/pipx/venvs/jupyter-core/bin/jupyter-qtconsole"
+      register: jupyter_qtconsole_bin
+
+    - name: Assert jupyter-qtconsole binary exists
+      assert:
+        that:
+          - jupyter_qtconsole_bin.stat.exists
+
+    - name: Check JupyterLab config file exists
+      stat:
+        path: "{{ jupyterlab_config_path }}"
+      register: config_file
+
+    - name: Assert config file exists
+      assert:
+        that:
+          - config_file.stat.exists
+
+    - name: Check config file contains use_redirect_file setting
+      shell: grep "^c.ServerApp.use_redirect_file = {{ jupyterlab_use_redirect_file | ternary('True', 'False') }}" "{{ jupyterlab_config_path }}"
+      register: redirect_file_setting
+      changed_when: false
+      failed_when: redirect_file_setting.rc != 0
+
+    - name: Check config file contains browser setting
+      shell: grep "^c.ServerApp.browser = '{{ jupyterlab_browser }}'" "{{ jupyterlab_config_path }}"
+      register: browser_setting
+      changed_when: false
+      failed_when: browser_setting.rc != 0
+      when: jupyterlab_browser | length > 0
