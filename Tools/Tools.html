@@ -1,0 +1,514 @@
+<html>
+    <head>
+        <title>Tools</title>
+    </head>
+    <body>
+        <div id="div-main">
+            <h1>IP Address Calculator</h1>
+            <form name="formIPCalc">
+                <div>IP Address: <input name="ip_addr" size="15" class="in" value="10.0.0.1" type="text">
+                    <select name="bits" class="in">
+                        <option name="1" value="1">/1, 128.0.0.0</option>
+                        <option name="1" value="2">/2, 192.0.0.0</option>
+                        <option name="1" value="3">/3, 224.0.0.0</option>
+                        <option name="1" value="4">/4, 240.0.0.0</option>
+                        <option name="1" value="5">/5, 248.0.0.0</option>
+                        <option name="1" value="6">/6, 252.0.0.0</option>
+                        <option name="1" value="7">/7, 254.0.0.0</option>
+                        <option name="1" value="8">/8, 255.0.0.0</option>
+                        <option name="1" value="9">/9, 255.128.0.0</option>
+                        <option name="1" value="10">/10, 255.192.0.0</option>
+                        <option name="1" value="11">/11, 255.224.0.0</option>
+                        <option name="1" value="12">/12, 255.240.0.0</option>
+                        <option name="1" value="13">/13, 255.248.0.0</option>
+                        <option name="1" value="14">/14, 255.252.0.0</option>
+                        <option name="1" value="15">/15, 255.254.0.0</option>
+                        <option name="1" value="16">/16, 255.255.0.0</option>
+                        <option name="1" value="17">/17, 255.255.128.0</option>
+                        <option name="1" value="18">/18, 255.255.192.0</option>
+                        <option name="1" value="19">/19, 255.255.224.0</option>
+                        <option name="1" value="20">/20, 255.255.240.0</option>
+                        <option name="1" value="21">/21, 255.255.248.0</option>
+                        <option name="1" value="22">/22, 255.255.252.0</option>
+                        <option name="1" value="23">/23, 255.255.254.0</option>
+                        <option name="1" value="24" selected>/24, 255.255.255.0</option>
+                        <option name="1" value="25">/25, 255.255.255.128</option>
+                        <option name="1" value="26">/26, 255.255.255.192</option>
+                        <option name="1" value="27">/27, 255.255.255.224</option>
+                        <option name="1" value="28">/28, 255.255.255.240</option>
+                        <option name="1" value="29">/29, 255.255.255.248</option>
+                        <option name="1" value="30">/30, 255.255.255.252</option>
+                        <option name="1" value="31">/31, 255.255.255.254</option>
+                        <option name="1" value="32">/32, 255.255.255.255</option>
+                    </select>
+                    <input value="calculate" onclick="calNBFL(this.form)" type="button">  
+                    <input value="reset" onclick="resetform4(this.form)" type="button">
+                </div>
+                <div>
+                    <table summary="result">
+                        <tbody>
+                            <tr>
+                                <td>Usable addresses:</td>
+                                <td><input name="numofaddr" size="10" readonly="readonly" type="text"></td>
+                                <td>Mask:</td>
+                                <td><input name="snm_addr" size="15" readonly="readonly" type="text"> </td>
+                            </tr>
+                            <tr>
+                                <td>Network:</td>
+                                <td><input name="nwadr_addr" size="15" readonly="readonly" type="text"> </td>
+                                <td>Broadcast:</td>
+                                <td><input name="bcast_addr" size="15" readonly="readonly" type="text"> </td>
+                            </tr>
+                            <tr>
+                                <td>First usable:</td>
+                                <td><input name="firstadr_addr" size="15" readonly="readonly" type="text"> </td>
+                                <td>Last usable:</td>
+                                <td><input name="lastadr_addr" size="15" readonly="readonly" type="text"> </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+            <hr>
+            <h1>Required usable addresses --> Netmask</h1>
+            <form name="formRequiredAddr">
+                <div>Required addresses:
+                    <input name="required_addr" size="4" class="in" value="254" type="text"> 
+                    <input value="calculate" onclick="calcNeeded(this.form)" type="button">  
+                    <input value="reset" onclick="resetform6(this.form)" type="button">
+                </div>
+                <div>Netmask: /
+                    <input name="bitmask" size="4" readonly="readonly" type="text"> ,&nbsp;&nbsp;&nbsp;
+                    <input name="subnetmask" size="15" readonly="readonly" type="text">
+                    Usable Addresses: 
+                    <input name="maxaddr" size="10" readonly="readonly" type="text"> 
+                </div>
+            </form>
+            <hr>
+        </div>
+        <h1>Password Generator</h1>
+		<form name="formPassGen " action="#" method="get" onsubmit="doGenerate(event);">
+			<div class="section" style="margin:0.8em 0em">
+				<div><label for="customchars">Characters:</label> <input type="text" id="customchars" value="2345679abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ!#$%" size="15" style="width:30em; font-size:80%"></div>
+				<div>Length: <input type="number" min="0" value="16" step="1" id="length" style="width:4em"></div>
+                <div>Password: <span id="password" style="font-weight:bold;"></span></div>
+			</div>
+			<p style="max-width:unset; line-height:1.35; word-break:break-all">
+				<input type="submit" value="Generate">
+				<input type="button" value="Copy" id="copy-button" onclick="doCopy();" disabled="disabled">
+			</p>
+		</form>
+		<hr>
+		<h1>Data Size Converter</h1>
+		<div style="margin:0.8em 0em">
+			<div>Value: <input type="number" id="datasize_value" value="1" oninput="convertDataSize()"></div>
+			<div>
+				From: 
+				<select id="datasize_from" onchange="convertDataSize()">
+					<optgroup label="1000-based">
+						<option value="B">B (bytes)</option>
+						<option value="KB">KB (kilobytes)</option>
+						<option value="MB">MB (megabytes)</option>
+						<option value="GB">GB (gigabytes)</option>
+						<option value="TB">TB (terabytes)</option>
+						<option value="PB">PB (petabytes)</option>
+					</optgroup>
+					<optgroup label="1024-based">
+						<option value="KiB" selected>KiB (kibibytes)</option>
+						<option value="MiB">MiB (mebibytes)</option>
+						<option value="GiB">GiB (gibibytes)</option>
+						<option value="TiB">TiB (tebibytes)</option>
+						<option value="PiB">PiB (pebibytes)</option>
+					</optgroup>
+				</select>
+				To: 
+				<select id="datasize_to" onchange="convertDataSize()">
+					<optgroup label="1000-based">
+						<option value="B" selected>B (bytes)</option>
+						<option value="KB">KB (kilobytes)</option>
+						<option value="MB">MB (megabytes)</option>
+						<option value="GB">GB (gigabytes)</option>
+						<option value="TB">TB (terabytes)</option>
+						<option value="PB">PB (petabytes)</option>
+					</optgroup>
+					<optgroup label="1024-based">
+						<option value="KiB">KiB (kibibytes)</option>
+						<option value="MiB">MiB (mebibytes)</option>
+						<option value="GiB">GiB (gibibytes)</option>
+						<option value="TiB">TiB (tebibytes)</option>
+						<option value="PiB">PiB (pebibytes)</option>
+					</optgroup>
+				</select>
+			</div>
+            <div>Result: <span id="datasize_result" style="font-weight:bold;"></span></div>
+		</div>
+		<hr>
+
+        <script type="text/javascript" language="JavaScript">
+        // region IP Address Calculator
+        function resetform4(cform) {
+            cform.bits.value=24;
+            cform.ip_addr.value="";
+            reset_rest_from4(cform);
+        }
+
+        function parseIPAddress(ipStr) {
+            var parts = ipStr.split('.');
+            if (parts.length !== 4) {
+                return null;
+            }
+            var octets = [];
+            for (var i = 0; i < 4; i++) {
+                var num = parseInt(parts[i], 10);
+                if (isNaN(num) || num > 255 || num < 0) {
+                    return null;
+                }
+                octets.push(num);
+            }
+            return octets;
+        }
+
+        function formatIPAddress(octets) {
+            return octets[0] + "." + octets[1] + "." + octets[2] + "." + octets[3];
+        }
+
+        function calNBFL(cform) {
+            reset_rest_from4(cform);
+            
+            var ipOctets = parseIPAddress(cform.ip_addr.value);
+            if (ipOctets === null) {
+                cform.numofaddr.value = 'ERR';
+                return(1);
+            }
+            
+            var bits = parseInt(cform.bits.value, 10);
+            if (isNaN(bits) || bits < 0 || bits > 32){
+                cform.numofaddr.value = 'ERR';
+                return(1);
+            }
+            
+            var maskOctets = calculateMaskOctets(bits);
+            cform.snm_addr.value = formatIPAddress(maskOctets);
+            
+            var networkOctets = [
+                ipOctets[0] & maskOctets[0],
+                ipOctets[1] & maskOctets[1],
+                ipOctets[2] & maskOctets[2],
+                ipOctets[3] & maskOctets[3]
+            ];
+            cform.nwadr_addr.value = formatIPAddress(networkOctets);
+            
+            var broadcastOctets = [
+                ipOctets[0] | (~maskOctets[0] & 0xff),
+                ipOctets[1] | (~maskOctets[1] & 0xff),
+                ipOctets[2] | (~maskOctets[2] & 0xff),
+                ipOctets[3] | (~maskOctets[3] & 0xff)
+            ];
+            cform.bcast_addr.value = formatIPAddress(broadcastOctets);
+            
+            if (bits == 31){
+                cform.numofaddr.value = "2";
+                cform.firstadr_addr.value = formatIPAddress(networkOctets);
+                cform.lastadr_addr.value = formatIPAddress(broadcastOctets);
+                return(0);
+            }
+            if (bits == 32){
+                cform.numofaddr.value = "1";
+                cform.firstadr_addr.value = formatIPAddress(ipOctets);
+                return(0);
+            }
+            
+            var firstOctets = networkOctets.slice();
+            firstOctets[3] = (firstOctets[3] + 1) & 0xff;
+            cform.firstadr_addr.value = formatIPAddress(firstOctets);
+            
+            var lastOctets = broadcastOctets.slice();
+            lastOctets[3] = (lastOctets[3] - 1) & 0xff;
+            cform.lastadr_addr.value = formatIPAddress(lastOctets);
+            
+            cform.numofaddr.value = Math.pow(2, 32 - bits) - 2;
+            
+            return(0);
+        }
+
+        function calculateMaskOctets(bits) {
+            var octets = [0, 0, 0, 0];
+            var tmpvar = bits;
+            
+            for (var i = 0; i < 4; i++) {
+                if (tmpvar >= 8) {
+                    octets[i] = 255;
+                    tmpvar -= 8;
+                } else {
+                    octets[i] = h_fillbitsfromleft(tmpvar);
+                    break;
+                }
+            }
+            
+            return octets;
+        }
+
+        function reset_rest_from4(cform){
+            cform.bcast_addr.value ="";
+            cform.nwadr_addr.value ="";
+            cform.firstadr_addr.value ="";
+            cform.lastadr_addr.value ="";
+            cform.snm_addr.value ="";
+            cform.numofaddr.value ="";
+        }
+
+        function h_fillbitsfromleft(num)
+        {
+            if (num >= 8 ){
+                return(255);
+            }
+            bitpat=0xff00; 
+            while (num > 0){
+                bitpat=bitpat >> 1;
+                num--;
+            }
+            return(bitpat & 0xff);
+        }
+        // endregion
+
+        // region Required usable addresses --> Netmask
+        function resetform6(cform) {
+            cform.required_addr.value="";
+            cform.bitmask.value="";
+            cform.maxaddr.value="";
+            cform.subnetmask.value="";
+        }
+
+        function calcNeeded(cform){
+            tmpvar = parseInt(cform.required_addr.value,10);
+            if (isNaN(tmpvar) || tmpvar > 0xfffffffe || tmpvar < 1){
+                cform.bitmask.value="ERR";
+                cform.subnetmask.value="";
+                cform.maxaddr.value="";
+                return;
+            }
+            expval=parseInt(Math.log(tmpvar)/Math.log(2)) + 1;
+            maxaddrval=Math.pow(2,expval);
+            if (maxaddrval - tmpvar < 2){
+                expval+=1;
+            }
+            cform.maxaddr.value= Math.pow(2,expval) - 2;
+            var bits = 32 - expval;
+            cform.bitmask.value=bits;
+            
+            var maskOctets = [0, 0, 0, 0];
+            var remainingBits = bits;
+            if (remainingBits >= 8){
+                maskOctets[0] = 255;
+                remainingBits-=8;
+            }else{
+                maskOctets[0] = h_fillbitsfromleft(remainingBits);
+                cform.subnetmask.value = formatIPAddress(maskOctets);
+                return;
+            }
+            if (remainingBits >= 8){
+                maskOctets[1] = 255;
+                remainingBits-=8;
+            }else{
+                maskOctets[1] = h_fillbitsfromleft(remainingBits);
+                cform.subnetmask.value = formatIPAddress(maskOctets);
+                return;
+            }
+            if (remainingBits >= 8){
+                maskOctets[2] = 255;
+                remainingBits-=8;
+            }else{
+                maskOctets[2] = h_fillbitsfromleft(remainingBits);
+                cform.subnetmask.value = formatIPAddress(maskOctets);
+                return;
+            }
+            maskOctets[3] = h_fillbitsfromleft(remainingBits);
+            cform.subnetmask.value = formatIPAddress(maskOctets);
+        }
+        // endregion
+
+        // region password generator
+		var passwordElem   = document.getElementById("password"   );
+		var copyElem       = document.getElementById("copy-button");
+		var cryptoObject    = null;
+		var currentPassword = null;
+		
+		function initCrypto() {
+			var elem = document.getElementById("crypto-getrandomvalues-entropy");
+			if (elem) {
+				elem.textContent = "\u2717";
+			}
+			
+			if ("crypto" in window)
+				cryptoObject = crypto;
+			else if ("msCrypto" in window)
+				cryptoObject = msCrypto;
+			else
+				return;
+			
+			if (!("getRandomValues" in cryptoObject) || !("Uint32Array" in window) || typeof Uint32Array != "function")
+				cryptoObject = null;
+			else if (elem)
+				elem.textContent = "\u2713";
+		}
+
+		function doGenerate(ev) {
+			ev.preventDefault();
+			
+			var charset = getPasswordCharacterSet();
+			if (charset.length == 0) {
+				alert("Error: Character set is empty");
+				return;
+			}
+			
+			var length = parseInt(document.getElementById("length").value, 10);
+			
+			if (0 > length) {
+				alert("Negative password length");
+				return;
+			} else if (length > 10000) {
+				alert("Password length too large");
+				return;
+			}
+			
+			currentPassword = generatePassword(charset, length);
+			passwordElem.textContent = currentPassword;
+			copyElem.disabled = false;
+		}
+
+		function doCopy() {
+			var container = document.querySelector("body");
+			var textarea = document.createElement("textarea");
+			textarea.style.position = "fixed";
+			textarea.style.opacity = "0";
+			container.insertBefore(textarea, container.firstChild);
+			textarea.value = currentPassword;
+			textarea.focus();
+			textarea.select();
+			document.execCommand("copy");
+			container.removeChild(textarea);
+		}
+
+		function getPasswordCharacterSet() {
+			var rawCharset = document.getElementById("customchars").value;
+			rawCharset = rawCharset.replace(/ /g, "\u00A0");
+			
+			var charset = [];
+			for (var i = 0; rawCharset.length > i; i++) {
+				var c = rawCharset.charCodeAt(i);
+				if (0xD800 > c || c >= 0xE000) {
+					var s = rawCharset.charAt(i);
+					if (charset.indexOf(s) == -1)
+						charset.push(s);
+					continue;
+				}
+				if (0xDC00 > c ? rawCharset.length > i + 1 : false) {
+					var d = rawCharset.charCodeAt(i + 1);
+					if (d >= 0xDC00 ? 0xE000 > d : false) {
+						var s = rawCharset.substring(i, i + 2);
+						i++;
+						if (charset.indexOf(s) == -1)
+							charset.push(s);
+						continue;
+					}
+				}
+				throw "Invalid UTF-16";
+			}
+			return charset;
+		}
+
+		function generatePassword(charset, len) {
+			var result = "";
+			for (var i = 0; len > i; i++)
+				result += charset[randomInt(charset.length)];
+			return result;
+		}
+
+		function randomInt(n) {
+			var x = randomIntMathRandom(n);
+			x = (x + randomIntBrowserCrypto(n)) % n;
+			return x;
+		}
+
+		function randomIntMathRandom(n) {
+			var x = Math.floor(Math.random() * n);
+			if (0 > x || x >= n)
+				throw "Arithmetic exception";
+			return x;
+		}
+
+		function randomIntBrowserCrypto(n) {
+			if (cryptoObject === null)
+				return 0;
+			var x = new Uint32Array(1);
+			do cryptoObject.getRandomValues(x);
+			while (x[0] - x[0] % n > 4294967296 - n);
+			return x[0] % n;
+		}
+        // endregion
+
+		// region Data Size Converter
+		function convertDataSize() {
+			var value = parseFloat(document.getElementById("datasize_value").value);
+			var fromUnit = document.getElementById("datasize_from").value;
+			var toUnit = document.getElementById("datasize_to").value;
+			var resultElem = document.getElementById("datasize_result");
+			
+			if (isNaN(value)) {
+				resultElem.textContent = "";
+				return;
+			}
+			
+			var bytes = valueToBytes(value, fromUnit);
+			var result = bytesToValue(bytes, toUnit);
+			
+			var formattedResult = result.toFixed(result < 1 ? 10 : 2).replace(/\.?0+$/, '');
+			resultElem.textContent = formattedResult + " " + toUnit;
+		}
+
+		function valueToBytes(value, unit) {
+			switch(unit) {
+				case 'B': return value;
+				case 'KB': return value * 1000;
+				case 'MB': return value * 1000 * 1000;
+				case 'GB': return value * 1000 * 1000 * 1000;
+				case 'TB': return value * 1000 * 1000 * 1000 * 1000;
+				case 'PB': return value * 1000 * 1000 * 1000 * 1000 * 1000;
+				
+				case 'KiB': return value * 1024;
+				case 'MiB': return value * 1024 * 1024;
+				case 'GiB': return value * 1024 * 1024 * 1024;
+				case 'TiB': return value * 1024 * 1024 * 1024 * 1024;
+				case 'PiB': return value * 1024 * 1024 * 1024 * 1024 * 1024;
+				
+				default: return 0;
+			}
+		}
+
+		function bytesToValue(bytes, unit) {
+			switch(unit) {
+				case 'B': return bytes;
+				case 'KB': return bytes / 1000;
+				case 'MB': return bytes / (1000 * 1000);
+				case 'GB': return bytes / (1000 * 1000 * 1000);
+				case 'TB': return bytes / (1000 * 1000 * 1000 * 1000);
+				case 'PB': return value * 1000 * 1000 * 1000 * 1000 * 1000;
+				
+				case 'KiB': return bytes / 1024;
+				case 'MiB': return bytes / (1024 * 1024);
+				case 'GiB': return bytes / (1024 * 1024 * 1024);
+				case 'TiB': return bytes / (1024 * 1024 * 1024 * 1024);
+				case 'PiB': return value * 1024 * 1024 * 1024 * 1024 * 1024;
+				
+				default: return 0;
+			}
+		}
+
+        convertDataSize();
+		initCrypto();
+		copyElem.disabled = true;
+        // endregion
+
+        </script>
+    </body>
+</html>
