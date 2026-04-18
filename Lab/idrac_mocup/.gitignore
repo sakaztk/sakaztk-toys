@@ -1,0 +1,6 @@
+idrac_mockup_client/
+iDRAC-Redfish-Scripting/
+Redfish-Mockup-Server/
+.ipynb_checkpoints/
+__pycache__/
+*.zip
