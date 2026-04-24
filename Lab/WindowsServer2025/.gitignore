@@ -1,0 +1,5 @@
+.autoversion/
+.ipynb_checkpoints/
+autounattend/
+*.vhdx
+
